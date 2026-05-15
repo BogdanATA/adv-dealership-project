@@ -1,7 +1,5 @@
 package com.pluralsight.dealership;
 
-import com.pluralsight.dealership.Vehicle;
-
 import java.io.*;
 import java.util.ArrayList;
 
