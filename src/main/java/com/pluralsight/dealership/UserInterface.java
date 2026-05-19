@@ -124,25 +124,11 @@ public class UserInterface {
         System.out.println("Vehicle not found. Please try again.");
     }
 
-    private void init() {
-        DealershipFileManager manager = new DealershipFileManager();
-        dealership = manager.getDealership();
-    }
 
-    private void displayVehicles(List<Vehicle> vehicles) {
-        if (vehicles != null) {
-            printHeader();
-            for (Vehicle vehicle : vehicles) {
-                System.out.println(vehicle);
-            }
-        }
-    }
 
-    private void saveAndConfirm(String message) {
-        DealershipFileManager manager = new DealershipFileManager();
-        manager.saveDealership(dealership);
-        System.out.println(message);
-    }
+    /*---------------------------------------------------------------
+    *                       Helper Methods
+    * --------------------------------------------------------------*/
 
     private String readString(String prompt) {
         System.out.print(prompt);
@@ -186,6 +172,26 @@ public class UserInterface {
         System.out.printf("%-10s %-6s %-12s %-12s %-12s %-10s %-12s %s\n",
                 "VIN", "Year", "Make", "Model", "Type", "Color", "Mileage", "Price");
         System.out.println("-".repeat(94));
+    }
+
+    private void displayVehicles(List<Vehicle> vehicles) {
+        if (vehicles != null) {
+            printHeader();
+            for (Vehicle vehicle : vehicles) {
+                System.out.println(vehicle);
+            }
+        }
+    }
+
+    private void saveAndConfirm(String message) {
+        DealershipFileManager manager = new DealershipFileManager();
+        manager.saveDealership(dealership);
+        System.out.println(message);
+    }
+
+    private void init() {
+        DealershipFileManager manager = new DealershipFileManager();
+        dealership = manager.getDealership();
     }
 
 }
