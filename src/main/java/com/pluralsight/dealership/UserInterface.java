@@ -1,7 +1,9 @@
 package com.pluralsight.dealership;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Scanner;
+import java.time.LocalDate;
 
 public class UserInterface {
 
@@ -33,7 +35,7 @@ public class UserInterface {
             System.out.print("Enter your choice: ");
             String choice = scanner.nextLine();
 
-            switch (choice) {
+            switch (choice.toUpperCase()) {
                 case "1" -> processGetByPriceRequest();
                 case "2" -> processGetByMakeModelRequest();
                 case "3" -> processGetByYearRequest();
@@ -43,7 +45,7 @@ public class UserInterface {
                 case "7" -> processGetAllVehiclesRequest();
                 case "8" -> processAddVehicleRequest();
                 case "9" -> processRemoveVehicleRequest();
-                case "S" -> System.out.println("sell vehicle");
+                case "S" -> processSellVehicleRequests();
                 case "L" -> System.out.println("lease vehicle");
                 case "99" -> quit = true;
                 default -> System.out.println("Invalid choice. Please try again.");
@@ -122,6 +124,56 @@ public class UserInterface {
         }
 
         System.out.println("Vehicle not found. Please try again.");
+    }
+
+    public void processSellVehicleRequests() {
+        System.out.println("\n--- Sell Vehicle ---");
+        int vin = readInt("Enter Vehicle VIN: ");
+
+        Vehicle vehicle = null;
+        for (Vehicle v : dealership.getAllVehicles()) {
+            if (v.getVin() == vin) {
+                System.out.println("\nVehicle found");
+                printHeader();
+                System.out.println(v);
+                vehicle = v;
+                break; // once match is found break the loop. No need to keep searching
+            }
+        }
+        if (vehicle == null) {
+            System.out.println("Vehicle not found");
+            return; // if vehicle was null exit out of method to not create a contract with a null vehicle
+        }
+
+        String customerName = readString("\nCustomer Name: ");
+        String customerEmail = readString("Customer Email: ");
+
+        boolean finance = false;
+        while (true) {
+            String financeAnswer = readString("Finance? (Y/N)");
+            if (financeAnswer.equalsIgnoreCase("Y")) {
+                finance = true;
+                break;
+            } else if (financeAnswer.equalsIgnoreCase("N")) {
+                finance = false;
+                break;
+            } else {
+                System.out.println("Invalid Input");
+            }
+        }
+
+        double salesTax = vehicle.getPrice() * .05;
+        double recordingFee = 100;
+        double processingFee = vehicle.getPrice() <= 10000 ? 295 : 495;
+
+        SalesContract contract = new SalesContract(LocalDate.now(), customerName, customerEmail, vehicle, salesTax,
+                recordingFee, processingFee, finance);
+
+        ContractDataManager contractDataManager = new ContractDataManager();
+        contractDataManager.saveContract(contract);
+
+        dealership.removeVehicle(vehicle);
+        saveAndConfirm("Vehicle Successfully Sold! Inventory Updated.");
     }
 
 
