@@ -1,5 +1,6 @@
 package com.pluralsight.dealership;
 
+import java.rmi.dgc.Lease;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Scanner;
@@ -46,7 +47,7 @@ public class UserInterface {
                 case "8" -> processAddVehicleRequest();
                 case "9" -> processRemoveVehicleRequest();
                 case "S" -> processSellVehicleRequests();
-                case "L" -> System.out.println("lease vehicle");
+                case "L" -> processLeaseVehicleRequests();
                 case "99" -> quit = true;
                 default -> System.out.println("Invalid choice. Please try again.");
             }
@@ -130,16 +131,8 @@ public class UserInterface {
         System.out.println("\n--- Sell Vehicle ---");
         int vin = readInt("Enter Vehicle VIN: ");
 
-        Vehicle vehicle = null;
-        for (Vehicle v : dealership.getAllVehicles()) {
-            if (v.getVin() == vin) {
-                System.out.println("\nVehicle found");
-                printHeader();
-                System.out.println(v);
-                vehicle = v;
-                break; // once match is found break the loop. No need to keep searching
-            }
-        }
+        Vehicle vehicle = findVehicleByVin(vin);
+
         if (vehicle == null) {
             System.out.println("Vehicle not found");
             return; // if vehicle was null exit out of method to not create a contract with a null vehicle
@@ -169,14 +162,31 @@ public class UserInterface {
         SalesContract contract = new SalesContract(LocalDate.now(), customerName, customerEmail, vehicle, salesTax,
                 recordingFee, processingFee, finance);
 
-        ContractDataManager contractDataManager = new ContractDataManager();
-        contractDataManager.saveContract(contract);
-
-        dealership.removeVehicle(vehicle);
-        saveAndConfirm("Vehicle Successfully Sold! Inventory Updated.");
+        saveContractAndRemoveVehicle(contract, vehicle, "Vehicle Successfully Sold! Inventory Updated.");
     }
 
+    public void processLeaseVehicleRequests() {
+        System.out.println("\n--- Lease Vehicle ---");
+        int vin = readInt("Enter Vehicle Vin: ");
 
+        Vehicle vehicle = findVehicleByVin(vin);
+
+        if (vehicle == null) {
+            System.out.println("Vehicle not found");
+            return; // if vehicle was null exit out of method to not create a contract with a null vehicle
+        }
+
+        String customerName = readString("\nCustomer Name: ");
+        String customerEmail = readString("Customer Email: ");
+
+        double expectedEndingValue = vehicle.getPrice() * .5;
+        double leaseFee = vehicle.getPrice() * .07;
+
+        LeaseContract contract = new LeaseContract(LocalDate.now(), customerName, customerEmail, vehicle,
+                expectedEndingValue, leaseFee);
+
+        saveContractAndRemoveVehicle(contract, vehicle, "Vehicle Successfully Leased! Inventory Updated.");
+    }
 
     /*---------------------------------------------------------------
     *                       Helper Methods
@@ -239,6 +249,25 @@ public class UserInterface {
         DealershipFileManager manager = new DealershipFileManager();
         manager.saveDealership(dealership);
         System.out.println(message);
+    }
+
+    private void saveContractAndRemoveVehicle(Contract contract, Vehicle vehicle, String message) {
+        ContractDataManager contractDataManager = new ContractDataManager();
+        contractDataManager.saveContract(contract);
+        dealership.removeVehicle(vehicle);
+        saveAndConfirm(message);
+    }
+
+    private Vehicle findVehicleByVin(int vin) {
+        for (Vehicle v : dealership.getAllVehicles()) {
+            if (v.getVin() == vin) {
+                System.out.println("\nVehicle found");
+                printHeader();
+                System.out.println(v);
+                return v;
+            }
+        }
+        return null;
     }
 
     private void init() {
