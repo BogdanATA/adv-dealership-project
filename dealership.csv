@@ -8,8 +8,6 @@ Car World|123 Main St|555-123-4567
 13003|2016|Jeep|Wrangler|SUV|green|42000|23995.0
 13004|2022|Tesla|Model 3|sedan|white|5000|39995.0
 13005|2015|BMW|328i|sedan|black|60000|15995.0
-13006|2018|Ford|F-150|truck|red|30000|32995.0
-13007|2020|Hyundai|Elantra|sedan|grey|14000|18995.0
 13008|2017|Toyota|Camry|sedan|blue|27000|19995.0
 13009|2023|Kia|Sportage|SUV|white|3000|31995.0
 13010|2019|Chevrolet|Tahoe|SUV|black|22000|42995.0
@@ -17,3 +15,4 @@ Car World|123 Main St|555-123-4567
 13012|2021|Mazda|CX-5|SUV|red|11000|27995.0
 13013|2018|Audi|A4|sedan|silver|26000|24995.0
 13014|2022|Toyota|Corolla|sedan|white|4000|23995.0
+11111|2026|toyota|rav4|SUV|grey|1000|45000.0
